@@ -9,15 +9,15 @@ const Navbar = () => {
     <nav className="bg-gradient-to-r from-red-600 to-red-800 text-white shadow-lg">
       <div className="container mx-auto flex justify-between items-center p-4">
          {/* 🏠 "রক্তবন্ধন" = Home Link */}
-         <Link to="/" className="text-2xl font-extrabold text-white drop-shadow-md hover:text-yellow-300 transition-all">
+         <Link to="/" className="text-3xl font-extrabold text-white drop-shadow-md hover:text-yellow-300 transition-all font-kalpurush">
           রক্তবন্ধন
         </Link>
 
         {/* 🖥️ Classy Desktop Menu */}
-        <div className="hidden md:flex gap-1">
+        <div className="hidden md:flex">
           {[
             { path: "/", label: "হোম" },
-            { path: "/requests", label: "রক্তের অনুরোধ" },
+            { path: "/requests", label: "রক্তের অনুরোধ তালিকা" },
             { path: "/login", label: "লগিন" },
             { path: "/register", label: "রেজিস্ট্রেশন" }
           ].map((item, index) => (

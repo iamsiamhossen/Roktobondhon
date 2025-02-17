@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
@@ -14,7 +14,7 @@ const Home = () => {
     { name: "আয়েশা", donations: "৮" },
     { name: "রাফি", donations: "৭" },
   ];
-
+  const [showTooltip, setShowTooltip] = useState(false);
   return (
     <div className="min-h-screen bg-gray-100 font-kalpurush">
       <Helmet>
@@ -40,25 +40,59 @@ const Home = () => {
             রক্তদাতা খুঁজুন
           </Link>
           <Link
-            to="/requestblood"
-            className="px-6 py-3 bg-black text-white font-bold text-xl rounded-lg hover:bg-gray-800 transition-colors"
+        to="/requestblood"
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        onClick={() => setShowTooltip(!showTooltip)}
+        className="px-6 py-3 bg-black text-white font-bold text-xl rounded-lg hover:bg-gray-800 transition-colors relative"
+      >
+        রক্তের অনুরোধ করুন
+      </Link>
+
+      <div className="relative">
+        {showTooltip && (
+          <div
+            className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3 w-64 bg-gray-900 text-white text-sm p-2 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out opacity-100 scale-100"
           >
-            রক্তের অনুরোধ করুন
-          </Link>
+            👉 যদি রক্তদাতা না পেয়ে থাকেন, তাহলে এখানে পোস্ট করুন।
+          </div>
+        )}
+      </div>
+          
         </div>
       </div>
 
       <div className="py-12 px-4 md:px-6 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">এটি কিভাবে কাজ করে?</h2>
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {["🔍 রক্তদাতা অনুসন্ধান করুন", "🆘 রক্তের অনুরোধ করুন", "💉 রক্ত দান করুন"].map((title, i) => (
-            <div key={i} className="p-6 bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow">
-              <h3 className="text-xl md:text-xl font-bold text-red-600">{title}</h3>
-              <p className="mt-2 text-gray-600">আপনার প্রয়োজনীয় তথ্য এখানে পাবেন।</p>
-            </div>
-          ))}
-        </div>
-      </div>
+  <h2 className="text-2xl md:text-3xl font-bold text-gray-800">এটি কিভাবে কাজ করে?</h2>
+  <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+    {/* রক্তদাতা অনুসন্ধান করুন */}
+    <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow">
+      <div className="text-4xl mb-4">🔍</div>
+      <h3 className="text-xl md:text-xl font-bold text-red-600">রক্তদাতা খুজুন</h3>
+      <p className="mt-2 text-gray-600">
+        আপনার এলাকায় রক্তদাতাদের খুঁজে পেতে এই অপশন ব্যবহার করুন । ব্লাড গ্রুপ এবং লোকেশন দিয়ে ফিল্টার করে সরাসরি রক্তদাতার সাথে যোগাযোগ করুন।
+      </p>
+    </div>
+
+    {/* রক্তের অনুরোধ করুন */}
+    <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow">
+      <div className="text-4xl mb-4">🆘</div>
+      <h3 className="text-xl md:text-xl font-bold text-red-600">রক্তের অনুরোধ করুন</h3>
+      <p className="mt-2 text-gray-600">
+      যদি রক্তদাতা না পেয়ে থাকেন, তাহলে অপশন ব্যবহার করে পোস্ট করুন।
+      </p>
+    </div>
+
+    {/* রক্ত দান করুন */}
+    <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow">
+      <div className="text-4xl mb-4">💉</div>
+      <h3 className="text-xl md:text-xl font-bold text-red-600">রক্ত দান করুন</h3>
+      <p className="mt-2 text-gray-600">
+        রক্তদাতা হিসেবে নিবন্ধন করুন এবং মানুষের জীবন বাঁচাতে সাহায্য করুন। আপনার রক্তের মাধ্যমে একটি জীবন বাঁচান।
+      </p>
+    </div>
+  </div>
+</div>
 
       <div className="py-12 px-4 md:px-6 bg-white">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">🔔 সাম্প্রতিক রক্তের অনুরোধ</h2>

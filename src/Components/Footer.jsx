@@ -14,7 +14,7 @@ const Footer = () => {
 
           {/* দরকারী লিঙ্ক */}
           <div className="text-center">
-            <h3 className="text-xl font-bold mb-4">দরকারী লিঙ্ক</h3>
+            <h3 className="text-xl font-bold mb-4">প্রয়োজনীয়</h3>
             <ul className="space-y-2">
               <li>
                 <a href="/about" className="text-sm text-gray-300 hover:text-red-400 transition-colors">
