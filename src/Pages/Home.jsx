@@ -95,7 +95,7 @@ const Home = () => {
 </div>
 
       <div className="py-12 px-4 md:px-6 bg-white">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">🔔 সাম্প্রতিক রক্তের অনুরোধ</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">সাম্প্রতিক রক্তের অনুরোধ</h2>
         <div className="mt-6 space-y-4">
           {recentRequests.map((req, index) => (
             <div key={index} className="p-4 bg-red-50 rounded-lg shadow transform transition-transform hover:scale-101">
