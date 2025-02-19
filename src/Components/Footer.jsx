@@ -91,7 +91,7 @@ const Footer = () => {
             © {new Date().getFullYear()} রক্তবন্ধন. সর্বস্বত্ব সংরক্ষিত।
           </p>
           <p className="text-sm text-gray-300 mt-1">
-            Made with <span className="text-red-400 font-semibold">❤️ Team Hotasha</span>
+            Made with <span className="text-red-400 font-semibold">Team Hotasha</span>
           </p>
         </div>
       </div>
