@@ -114,7 +114,7 @@ const Home = () => {
       </div>
 
       <div className="py-12 px-4 md:px-6">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">🏆 শীর্ষ দাতাগণ</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">🏆শীর্ষ দাতাগণ</h2>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           {topDonors.map((donor, index) => (
             <div key={index} className="p-4 bg-white rounded-lg shadow transform transition-transform hover:scale-102">
