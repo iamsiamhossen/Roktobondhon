@@ -27,7 +27,7 @@ const Home = () => {
 
       <div className="flex flex-col items-center justify-center text-center py-20 px-4 md:px-10 bg-gradient-to-r from-red-600 to-red-700 text-white">
         <h1 className="text-4xl md:text-5xl font-bold animate-fade-in-down">
-          জীবন বাঁচান
+          জীবন বাঁচান, রক্ত দান করুন
         </h1>
         <p className="text-base md:text-xl mt-4 max-w-2xl">
           আমাদের রক্তবন্ধন নেটওয়ার্কে যোগ দিন এবং মানুষের সাহায্যে এগিয়ে আসুন। প্রতিটি রক্ত ফোঁটা মূল্যবান!
