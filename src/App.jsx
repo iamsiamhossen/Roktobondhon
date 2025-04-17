@@ -12,6 +12,7 @@ import Footer from "./Components/Footer";
 import NotFound from './Pages/NotFound';
 import FindDonors from "./Pages/FindDonors";
 import BloodRequestForm from "./Components/BloodRequestForm";
+// import PatientRegister from "./Components/patient/PatientRegister";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/requests" element={<RequestList />} />
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="*" element={<NotFound />} />
+        {/* <Route path="/PatientRegister" element={<PatientRegister />} /> */}
       </Routes>
 
       
