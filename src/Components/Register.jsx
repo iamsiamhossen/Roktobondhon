@@ -1,15 +1,23 @@
-import React from "react";
-import { FaUserInjured, FaHandHoldingHeart, FaTint, FaUserPlus } from "react-icons/fa";
-import PatientRegistration from "../components/patient/PatientRegister";
+import { FaUserInjured, FaHandHoldingHeart, FaTint } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
+
   return (
-    <div 
-      className="flex justify-center items-center min-h-screen bg-[#fff9f9]"
-      style={{ fontFamily: "'Kalpurush', 'SolaimanLipi', sans-serif" }}
+    <div
+      className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{
+        backgroundImage: `url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop')`,
+        fontFamily: "'Kalpurush', 'SolaimanLipi', sans-serif",
+      }}
     >
-      <div className="p-8 bg-white rounded-2xl shadow-2xl border border-red-200 w-full max-w-md mx-4">
-        {/* Header with blood drop icon */}
+      {/* Glassmorphism Blur Overlay */}
+      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm z-0" />
+
+      {/* Registration Card */}
+      <div className="relative z-10 p-8 bg-white bg-opacity-90 rounded-2xl shadow-2xl border border-red-200 w-full max-w-md mx-4">
+        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-3">
             <FaTint className="text-red-500 text-5xl animate-pulse" />
@@ -18,20 +26,18 @@ const Register = () => {
           <p className="text-red-400">নতুন একাউন্ট তৈরি করুন</p>
         </div>
 
-        {/* Role Selection Buttons */}
+        {/* Role Selection Buttons - Now Direct Links */}
         <div className="space-y-5">
-          {/* Patient Registration Button */}
           <button
-            onClick={() => document.getElementById("patient_reg_modal").showModal()}
+            onClick={() => navigate("/patient/register")}
             className="flex items-center justify-center w-full py-4 px-5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl shadow-md transition-all transform hover:scale-[1.02]"
           >
             <FaUserInjured className="mr-3 text-xl" />
             <span className="text-lg">রোগী রেজিস্ট্রেশন</span>
           </button>
 
-          {/* Donor Registration Button */}
           <button
-            onClick={() => document.getElementById("donor_reg_modal").showModal()}
+            onClick={() => navigate("/donor/register")}
             className="flex items-center justify-center w-full py-4 px-5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl shadow-md transition-all transform hover:scale-[1.02]"
           >
             <FaHandHoldingHeart className="mr-3 text-xl" />
@@ -39,45 +45,10 @@ const Register = () => {
           </button>
         </div>
 
-        {/* Additional Info */}
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>প্রয়োজনে কল করুন: <span className="text-red-600 font-bold">০১৭XX-XXXXXX</span></p>
+        {/* Info */}
+        <div className="mt-8 text-center text-sm text-gray-600">
+          <p>প্রয়োজনে কল করুন: <span className="text-red-600 font-bold">০১৪০০৬৯৫৬২১</span></p>
         </div>
-
-        {/* Patient Registration Modal */}
-        <dialog id="patient_reg_modal" className="modal modal-bottom sm:modal-middle">
-          <div className="modal-box bg-white p-0 overflow-hidden w-full sm:max-w-md md:max-w-lg rounded-t-3xl sm:rounded-2xl border-2 border-red-200 shadow-xl">
-            {/* Header */}
-            <div className="bg-red-600 p-4 sm:p-5 text-white">
-              <h3 className="font-bold text-xl sm:text-2xl flex items-center justify-center">
-                <FaUserInjured className="mr-2 sm:mr-3 text-lg sm:text-xl" />
-                রোগী রেজিস্ট্রেশন
-              </h3>
-            </div>
-            
-            {/* Content */}
-            <div className="p-4 sm:p-8 max-h-[70vh] overflow-y-auto">
-              <PatientRegistration />
-            </div>
-            
-            {/* Footer */}
-            <div className="modal-action p-4 sm:p-5 bg-gray-50 border-t border-gray-200 sticky bottom-0">
-              <form method="dialog" className="w-full flex justify-center">
-                <button className="btn bg-white text-red-600 hover:bg-red-50 border border-red-200 px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg w-full sm:w-auto">
-                  বন্ধ করুন
-                </button>
-              </form>
-            </div>
-          </div>
-          <form method="dialog" className="modal-backdrop bg-black/50">
-            <button>close</button>
-          </form>
-        </dialog>
-
-        {/* Donor Registration Modal (Similar structure) */}
-        <dialog id="donor_reg_modal" className="modal modal-bottom sm:modal-middle">
-          {/* Similar modal structure with DonorRegistration component */}
-        </dialog>
       </div>
     </div>
   );
