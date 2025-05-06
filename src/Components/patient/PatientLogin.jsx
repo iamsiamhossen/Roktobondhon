@@ -1,94 +1,170 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaMobileAlt, FaLock, FaSignInAlt, FaEye, FaEyeSlash } from "react-icons/fa";
+import { auth, db } from "../firebase";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 
 const PatientLogin = () => {
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  // Check user auth
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        if (!user.emailVerified) {
+          await auth.signOut();
+          setIsCheckingAuth(false);
+          return;
+        }
+
+        const patientDoc = await getDoc(doc(db, 'patients', user.uid));
+        if (patientDoc.exists()) {
+          navigate('/patient/dashboard');
+        } else {
+          await auth.signOut();
+          setIsCheckingAuth(false);
+        }
+      } else {
+        setIsCheckingAuth(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [navigate]);
+
+  // Handle login
+  const handleLogin = async (e) => {
     e.preventDefault();
-    localStorage.setItem("token", "patientToken");
-    localStorage.setItem("role", "patient");
-    navigate("/requester-dashboard");
+    setError('');
+    setLoading(true);
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
+        await auth.signOut();
+        setError('আপনার ইমেইল ভেরিফাই করা হয়নি। দয়া করে আপনার ইমেইল চেক করুন।');
+        setLoading(false);
+        return;
+      }
+
+      const patientDoc = await getDoc(doc(db, 'patients', user.uid));
+      if (!patientDoc.exists()) {
+        await auth.signOut();
+        setError('এই ইমেইল রোগী হিসেবে রেজিস্টার্ড নয়।');
+        setLoading(false);
+        return;
+      }
+
+    } catch (error) {
+      switch (error.code) {
+        case 'auth/user-not-found':
+          setError('এই ইমেইলে কোনো একাউন্ট নেই');
+          break;
+        case 'auth/wrong-password':
+          setError('ভুল পাসওয়ার্ড');
+          break;
+        case 'auth/too-many-requests':
+          setError('অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন');
+          break;
+        case 'auth/invalid-email':
+          setError('অবৈধ ইমেইল ঠিকানা');
+          break;
+        default:
+          setError('লগইনে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন');
+      }
+      setLoading(false);
+    }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-red-50 to-white p-6">
-      <div className="w-full max-w-md mx-auto">
-        {/* Form Container */}
-        <form onSubmit={handleLogin} className="bg-white rounded-xl shadow-lg p-8 space-y-6 border border-red-100">
-          
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-red-600">রক্তবন্ধন</h1>
-            <p className="text-gray-600 text-lg">জীবন বাঁচাতে রক্ত দিন,রক্ত নিন</p>
-          </div>
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-rose-50">
+        <FaSpinner className="animate-spin text-4xl text-rose-600" />
+      </div>
+    );
+  }
 
-          {/* Mobile Field */}
-          <div className="space-y-2">
-            <label className="block text-lg font-medium text-gray-700">মোবাইল নম্বর</label>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-100 to-rose-200 p-4 font-kalpurush text-black">
+      <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center mb-6 text-rose-600">রোগীর লগইন</h2>
+
+        {error && (
+          <div className="bg-rose-100 text-rose-700 border border-rose-300 px-4 py-3 mb-4 rounded">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div className="relative">
+            <label className="text-sm text-gray-700 block mb-1">ইমেইল</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaMobileAlt className="text-red-500 text-lg" />
-              </div>
+              <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2" />
               <input
-                type="tel"
-                className="w-full pl-12 pr-4 py-3 text-lg border border-red-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 bg-gray-50"
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
-                pattern="[0-9]{11}"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="০১৭XXXXXXXX"
+                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none"
+                placeholder="আপনার ইমেইল দিন"
               />
             </div>
           </div>
 
-          {/* Password Field */}
-          <div className="space-y-2">
-            <label className="block text-lg font-medium text-gray-700">পাসওয়ার্ড</label>
+          <div className="relative">
+            <label className="text-sm text-gray-700 block mb-1">পাসওয়ার্ড</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaLock className="text-red-500 text-lg" />
-              </div>
+              <FaLock className="absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type={showPassword ? "text" : "password"}
-                className="w-full pl-12 pr-12 py-3 text-lg border border-red-200 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-200 bg-gray-50"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500 focus:outline-none text-black"
+                placeholder="আপনার পাসওয়ার্ড দিন"
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-red-600"
                 onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 focus:outline-none"
               >
-                {showPassword ? <FaEyeSlash className="text-xl" /> : <FaEye className="text-xl" />}
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>
 
-          {/* Login Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-red-600 hover:bg-red-700 text-white text-lg font-semibold rounded-lg shadow transition-all flex items-center justify-center space-x-2"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg text-white font-semibold transition duration-300 ${
+              loading ? 'bg-rose-400 cursor-not-allowed' : 'bg-rose-600 hover:bg-rose-700'
+            }`}
           >
-            <FaSignInAlt />
-            <span>লগইন করুন</span>
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <FaSpinner className="animate-spin" />
+                লগইন হচ্ছে...
+              </span>
+            ) : (
+              "লগইন করুন"
+            )}
           </button>
-
-          {/* Links */}
-          <div className="flex flex-col space-y-3 pt-4 text-center">
-            <a href="/Register" className="text-red-600 hover:text-red-800 text-md">
-              নতুন একাউন্ট তৈরি করুন
-            </a>
-            <a href="/forgot-password" className="text-gray-600 hover:text-red-600 text-md">
-              পাসওয়ার্ড ভুলে গেছেন?
-            </a>
-          </div>
         </form>
+
+        <div className="mt-4 text-center text-sm text-gray-600">
+          একাউন্ট নেই?{" "}
+          <a href="/patient/register" className="text-rose-600 font-medium hover:underline">
+            রেজিস্টার করুন
+          </a>
+        </div>
       </div>
     </div>
   );
