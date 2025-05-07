@@ -13,27 +13,35 @@ const Login = () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          // ইমেইল ভেরিফিকেশন চেক
+          // Reload user to get latest data
           await user.reload();
           const currentUser = auth.currentUser;
           
-          if (!currentUser.emailVerified) {
-            await signOut(auth);
-            navigate('/verify-email', { 
-              state: { email: user.email } 
-            });
+          // Get the user's token to check claims
+          const token = await currentUser.getIdTokenResult(true);
+          
+          if (token.claims.admin) {
+            // Skip email verification for admin and redirect directly
+            navigate("/admin/dashboard");
             return;
+          } else {
+            // For non-admin users, check email verification
+            if (!currentUser.emailVerified) {
+              await signOut(auth);
+              navigate('/verify-email', { 
+                state: { email: user.email } 
+              });
+              return;
+            }
+            
+            // Redirect other roles after verification
+            if (token.claims.donor) navigate("/donor/dashboard");
+            else if (token.claims.patient) navigate("/patient/dashboard");
+            else {
+              await signOut(auth);
+              alert("আপনার অ্যাক্সেস পাওয়ার জন্য অনুমোদন প্রয়োজন");
+            }
           }
-
-          // রোল চেক
-          // const token = await currentUser.getIdTokenResult(true);
-          // if (token.claims.admin) navigate("/admin/dashboard");
-          // else if (token.claims.donor) navigate("/donor/dashboard");
-          // else if (token.claims.patient) navigate("/patient/dashboard");
-          // else {
-          //   await signOut(auth);
-          //   alert("আপনার অ্যাক্সেস পাওয়ার জন্য অনুমোদন প্রয়োজন");
-          // }
         } catch (error) {
           console.error("Error verifying user:", error);
           await signOut(auth);
@@ -53,8 +61,10 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover bg-center" style={{backgroundImage: "url('your-bg-image.jpg')"}}>
+    <div className="min-h-screen flex items-center justify-center bg-cover bg-center " style={{backgroundImage: "url('https://img.freepik.com/free-vector/doctors-concept-illustration_114360-1515.jpg?t=st=1746252163~exp=1746255763~hmac=569edb6b2da69c3e5dd9c199ae8647d18390d758f6c7b76e32e67b86be1f1fef&w=1380')"}}>
+      
       <div className="bg-white bg-opacity-90 p-8 rounded-2xl shadow-xl w-full max-w-md">
+        
         {/* হেডার */}
         <div className="text-center mb-8">
           <FaTint className="text-red-500 text-5xl mx-auto mb-3" />
@@ -80,13 +90,13 @@ const Login = () => {
             রক্তদাতা লগইন
           </button>
 
-          <button 
+          {/* <button 
             onClick={() => navigate("/admin/login")}
             className="flex items-center justify-center w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
           >
             <FaUserShield className="mr-2" />
             অ্যাডমিন লগইন
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { FaSearch, FaHeartbeat, FaHandsHelping, FaTint, FaMedal, FaBell, FaArrow
 import { GiHealthNormal, GiHeartBeats } from "react-icons/gi";
 import { motion } from "framer-motion";
 import RecentBloodRequests from "./RecentBloodRequest";
+import TopDonor from "./topdonor"
 
 const Home = () => {
   const [recentRequests, setRecentRequests] = useState([]);
@@ -161,7 +162,7 @@ const Home = () => {
                 className="relative"
               >
                 <Link
-                  to="/register"
+                  to="/donor/register"
                   className="px-8 py-4 bg-gray-900 text-white font-bold text-lg rounded-xl hover:bg-gray-800 transition-all shadow-lg flex items-center justify-center gap-2"
                 >
                   <GiHealthNormal /> রক্তদাতা হন 
@@ -375,65 +376,12 @@ const Home = () => {
         </div>
        </section>
       
-      {/* Top Donors Section */}
-      <div className="py-20 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <motion.h2 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold text-gray-900"
-            >
-              আমাদের <span className="text-red-600">শীর্ষ রক্তদাতা</span>
-            </motion.h2>
-            <p className="mt-4 max-w-2xl mx-auto text-gray-600">
-              যারা সবচেয়ে বেশি সংখ্যক রক্তদান করে মানুষের জীবন বাঁচিয়েছেন
-            </p>
-          </div>
-
-          <motion.div 
-            variants={container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-5 gap-6"
-          >
-            {topDonors.map((donor, index) => (
-              <motion.div 
-                key={index} 
-                variants={item}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all"
-              >
-                <div className="p-6 text-center">
-                  <div className="relative mx-auto w-20 h-20 mb-4">
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-200 rounded-full"></div>
-                    <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
-                      <span className="text-xl font-bold text-red-600">{index + 1}</span>
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-800">{donor.name}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{donor.bloodGroup}</p>
-                  <div className="flex items-center justify-center space-x-1">
-                    <FaTint className="text-red-500" />
-                    <span className="font-medium text-gray-900">{donor.totalDonations} বার</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <div className="text-center mt-10">
-            <Link 
-              to="/finddonor" 
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 shadow-sm"
-            >
-              সব দাতা দেখুন
-            </Link>
-          </div>
+     {/* Recent blood request */}
+     <section>
+        <div>
+          <TopDonor/>
         </div>
-      </div>
+       </section>
 
       {/* CTA Section */}
       <div className="relative py-20 overflow-hidden bg-gradient-to-r from-red-700 to-red-800">
@@ -457,7 +405,7 @@ const Home = () => {
               className="inline-block"
             >
               <Link
-                to="/register"
+                to="/donor/register"
                 className="px-8 py-4 bg-white text-red-700 font-bold text-lg rounded-xl hover:bg-gray-100 transition-all shadow-lg flex items-center justify-center gap-2 mx-auto"
               >
                 <GiHealthNormal className="text-xl" /> এখনই রেজিস্টার করুন

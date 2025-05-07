@@ -1,167 +1,49 @@
-import { useState } from "react";
-import { FaPhone, FaMapMarkerAlt, FaTint, FaClock, FaUser, FaHeart, FaCheck } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaPhone, FaMapMarkerAlt, FaTint, FaClock, FaUser, FaHeart, FaCheck, FaExclamationTriangle } from "react-icons/fa";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 const FindDonors = () => {
-  // Sirajganj-based demo dataset (only active donors)
-  const donors = [
-    { 
-      id: 1,
-      name: "আব্দুল হামিদ",
-      bloodGroup: "A+",
-      location: "সিরাজগঞ্জ সদর",
-      available: true,
-      lastDonation: "২০২৪-০৩-১৫",
-      nextAvailable: "২০২৪-০৫-১৫",
-      totalDonations: 9,
-      phone: "০১৭১২-৩৪৫৬৭৮",
-      age: 31,
-      gender: "পুরুষ",
-      profession: "শিক্ষক",
-      healthStatus: "সুস্থ",
-      donationHistory: [
-        { date: "২০২৪-০৩-১৫", location: "সিরাজগঞ্জ জেনারেল হাসপাতাল" },
-        { date: "২০২৩-১২-২০", location: "সিরাজগঞ্জ রেড ক্রিসেন্ট" }
-      ],
-      photo: "https://img.freepik.com/free-vector/isolated-young-handsome-man-different-poses-white-background-illustration_632498-859.jpg?t=st=1745082955~exp=1745086555~hmac=6e4143282a4fddb1cbdfd4a360945edf6ae96a3199f9bd0d69733ccfc8fe5fa8&w=826"
-
-
-    },
-    { 
-      id: 2,
-      name: "নাসরিন আক্তার",
-      bloodGroup: "O-",
-      location: "বেলকুচি",
-      available: true,
-      lastDonation: "২০২৪-০২-২৫",
-      nextAvailable: "২০২৪-০৪-২৫",
-      totalDonations: 14,
-      phone: "০১৯৮৭-৬৫৪৩২১",
-      age: 29,
-      gender: "মহিলা",
-      profession: "নার্স",
-      healthStatus: "সুস্থ",
-      donationHistory: [
-        { date: "২০২৪-০২-২৫", location: "বেলকুচি উপজেলা স্বাস্থ্য কমপ্লেক্স" },
-        { date: "২০২৩-১১-১০", location: "সিরাজগঞ্জ জেনারেল হাসপাতাল" }
-      ],
-      photo: "https://img.freepik.com/premium-vector/woman-sign-icon-comic-style-female-avatar-vector-cartoon-illustration-white-isolated-background-girl-face-business-concept-splash-effect_157943-6110.jpg?w=826",
-      
-
-    },
-    { 
-      id: 4,
-      name: "সালমা বেগম",
-      bloodGroup: "AB+",
-      location: "শাহজাদপুর",
-      available: true,
-      lastDonation: "২০২৩-১২-১০",
-      nextAvailable: "২০২৪-০২-১০",
-      totalDonations: 11,
-      phone: "০১৬৭৮-১২৩৪৫৬",
-      age: 26,
-      gender: "মহিলা",
-      profession: "সেলাই কাজ",
-      healthStatus: "সুস্থ",
-      donationHistory: [
-        { date: "২০২৩-১২-১০", location: "শাহজাদপুর উপজেলা স্বাস্থ্য কমপ্লেক্স" },
-        { date: "২০২৩-০৯-২০", location: "সিরাজগঞ্জ রেড ক্রিসেন্ট" }
-      ],
-      photo: "https://img.freepik.com/premium-vector/woman-sign-icon-comic-style-female-avatar-vector-cartoon-illustration-white-isolated-background-girl-face-business-concept-splash-effect_157943-6110.jpg?w=826"
-    },
-    { 
-      id: 5,
-      name: "জাহাঙ্গীর আলম",
-      bloodGroup: "O+",
-      location: "উল্লাপাড়া",
-      available: true,
-      lastDonation: "২০২৪-০২-২৮",
-      nextAvailable: "২০২৪-০৪-২৮",
-      totalDonations: 13,
-      phone: "০১৫৫৮-৩৬৯২৫৮",
-      age: 32,
-      gender: "পুরুষ",
-      profession: "ব্যবসায়ী",
-      healthStatus: "সুস্থ",
-      donationHistory: [
-        { date: "২০২৪-০২-২৮", location: "উল্লাপাড়া উপজেলা স্বাস্থ্য কমপ্লেক্স" },
-        { date: "২০২৩-১১-১৫", location: "সিরাজগঞ্জ জেনারেল হাসপাতাল" }
-      ],
-      photo: "https://img.freepik.com/free-vector/isolated-young-handsome-man-different-poses-white-background-illustration_632498-859.jpg?t=st=1745082955~exp=1745086555~hmac=6e4143282a4fddb1cbdfd4a360945edf6ae96a3199f9bd0d69733ccfc8fe5fa8&w=826"
-    },
-    { 
-      id: 7,
-      name: "ইমরান হোসেন",
-      bloodGroup: "B-",
-      location: "তাড়াশ",
-      available: true,
-      lastDonation: "২০২৪-০৩-০১",
-      nextAvailable: "২০২৪-০৫-০১",
-      totalDonations: 8,
-      phone: "০১৯৬৩-২৫৪৭৮৯",
-      age: 28,
-      gender: "পুরুষ",
-      profession: "ড্রাইভার",
-      healthStatus: "সুস্থ",
-      donationHistory: [
-        { date: "২০২৪-০৩-০১", location: "তাড়াশ উপজেলা স্বাস্থ্য কমপ্লেক্স" },
-        { date: "২০২৩-১২-০৫", location: "সিরাজগঞ্জ জেনারেল হাসপাতাল" }
-      ],
-      photo: "https://img.freepik.com/free-vector/isolated-young-handsome-man-different-poses-white-background-illustration_632498-859.jpg?t=st=1745082955~exp=1745086555~hmac=6e4143282a4fddb1cbdfd4a360945edf6ae96a3199f9bd0d69733ccfc8fe5fa8&w=826"
-    },
-    { 
-      id: 8,
-      name: "আয়েশা সিদ্দিকা",
-      bloodGroup: "AB-",
-      location: "কামারখন্দ",
-      available: true,
-      lastDonation: "২০২৪-০২-১৫",
-      nextAvailable: "২০২৪-০৪-১৫",
-      totalDonations: 10,
-      phone: "০১৮৭৫-৩৬৯৮৫২",
-      age: 27,
-      gender: "মহিলা",
-      profession: "শিক্ষিকা",
-      healthStatus: "সুস্থ",
-      donationHistory: [
-        { date: "২০২৪-০২-১৫", location: "কামারখন্দ উপজেলা স্বাস্থ্য কমপ্লেক্স" },
-        { date: "২০২৩-১১-২০", location: "সিরাজগঞ্জ রেড ক্রিসেন্ট" }
-      ],
-      photo: "https://img.freepik.com/premium-vector/woman-sign-icon-comic-style-female-avatar-vector-cartoon-illustration-white-isolated-background-girl-face-business-concept-splash-effect_157943-6110.jpg?w=826"
-    },
-    { 
-      id: 10,
-      name: "ফারজানা আক্তার",
-      bloodGroup: "O+",
-      location: "সিরাজগঞ্জ সদর",
-      available: true,
-      lastDonation: "২০২৪-০৩-০৫",
-      nextAvailable: "২০২৪-০৫-০৫",
-      totalDonations: 15,
-      phone: "০১৯৫৪-৭৮৫৪১২",
-      age: 31,
-      gender: "মহিলা",
-      profession: "ফার্মাসিস্ট",
-      healthStatus: "সুস্থ",
-      donationHistory: [
-        { date: "২০২৪-০৩-০৫", location: "সিরাজগঞ্জ জেনারেল হাসপাতাল" },
-        { date: "২০২৩-১২-১২", location: "সিরাজগঞ্জ রেড ক্রিসেন্ট" }
-      ],
-      photo: "https://img.freepik.com/premium-vector/woman-sign-icon-comic-style-female-avatar-vector-cartoon-illustration-white-isolated-background-girl-face-business-concept-splash-effect_157943-6110.jpg?w=826"
-    }
-  ];
-
   // State management
+  const [donors, setDonors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBloodGroup, setSelectedBloodGroup] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [showPhone, setShowPhone] = useState(null);
   const [selectedDonor, setSelectedDonor] = useState(null);
 
-  // Filter logic (only active donors)
+  // Fetch donors from Firestore
+  useEffect(() => {
+    const fetchDonors = async () => {
+      try {
+        const donorsRef = collection(db, "donors");
+        const q = query(donorsRef, where("status", "==", "active"));
+        const querySnapshot = await getDocs(q);
+        
+        const donorsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        setDonors(donorsData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching donors:", error);
+        setError("ডাটা লোড করতে সমস্যা হচ্ছে। পরে আবার চেষ্টা করুন");
+        setLoading(false);
+      }
+    };
+
+    fetchDonors();
+  }, []);
+
+  // Filter logic
   const filteredDonors = donors.filter(donor => {
-    const matchesSearch = donor.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         donor.bloodGroup.includes(searchQuery);
-    const matchesBloodGroup = selectedBloodGroup ? donor.bloodGroup === selectedBloodGroup : true;
+    const matchesSearch = donor.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         donor.bloodType?.includes(searchQuery);
+    const matchesBloodGroup = selectedBloodGroup ? donor.bloodType === selectedBloodGroup : true;
     const matchesLocation = selectedLocation ? donor.location === selectedLocation : true;
 
     return matchesSearch && matchesBloodGroup && matchesLocation;
@@ -179,6 +61,37 @@ const FindDonors = () => {
     "কামারখন্দ",
     "চৌহালী"
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">রক্তদাতাদের তথ্য লোড হচ্ছে...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="bg-white p-6 rounded-xl shadow-md max-w-md text-center">
+          <div className="text-red-500 mb-4">
+            <FaExclamationTriangle size={48} className="mx-auto" />
+          </div>
+          <h3 className="text-xl font-bold text-red-600 mb-2">ত্রুটি!</h3>
+          <p className="text-gray-700 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+          >
+            আবার চেষ্টা করুন
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6 font-kalpurush">
@@ -262,7 +175,7 @@ const FindDonors = () => {
                   <div className="flex items-start gap-4">
                     <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden">
                       {donor.photo ? (
-                        <img src={donor.photo} alt={donor.name} className="w-full h-full object-cover" />
+                        <img src={donor.photo} alt={donor.fullName} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                           <FaUser size={24} />
@@ -272,14 +185,14 @@ const FindDonors = () => {
                     <div className="flex-1">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h2 className="text-xl font-bold text-red-600">{donor.name}</h2>
+                          <h2 className="text-xl font-bold text-red-600">{donor.fullName}</h2>
                           <p className="text-gray-600 flex items-center gap-1">
-                            <FaTint className={`text-${donor.bloodGroup.includes('+') ? 'red-500' : 'blue-500'}`} />
-                            {donor.bloodGroup}
+                            <FaTint className={`text-${donor.bloodType.includes('+') ? 'red-500' : 'blue-500'}`} />
+                            {donor.bloodType}
                           </p>
                         </div>
                         <span className="px-2 py-1 rounded-full text-sm bg-green-100 text-green-700">
-                          সক্রিয়
+                          {donor.isAvailable ? "সক্রিয়" : "অনুপলব্ধ"}
                         </span>
                       </div>
 
@@ -289,11 +202,11 @@ const FindDonors = () => {
                           {donor.location}
                         </p>
                         <p className="text-gray-700">
-                          রক্ত দিয়েছেন: {donor.totalDonations} বার
+                          রক্ত দিয়েছেন: {donor.donationCount || 0} বার
                         </p>
                         <p className="text-gray-700 flex items-center gap-2">
                           <FaClock className="text-gray-400" />
-                          শেষ দান: {donor.lastDonation}
+                          শেষ দান: {donor.lastDonation ? new Date(donor.lastDonation).toLocaleDateString() : "তথ্য নেই"}
                         </p>
                       </div>
 
@@ -301,7 +214,7 @@ const FindDonors = () => {
                         {showPhone === donor.id ? (
                           <div className="bg-green-50 p-3 rounded-lg">
                             <p className="text-green-700 font-bold flex items-center gap-2">
-                              <FaPhone /> {donor.phone}
+                              <FaPhone /> {donor.phone || "তথ্য নেই"}
                             </p>
                             <button 
                               onClick={(e) => {
@@ -344,7 +257,7 @@ const FindDonors = () => {
             <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-2xl font-bold text-red-600">{selectedDonor.name} - {selectedDonor.bloodGroup}</h2>
+                  <h2 className="text-2xl font-bold text-red-600">{selectedDonor.fullName} - {selectedDonor.bloodType}</h2>
                   <button 
                     onClick={() => setSelectedDonor(null)}
                     className="text-gray-500 hover:text-gray-700"
@@ -357,7 +270,7 @@ const FindDonors = () => {
                   <div className="col-span-1">
                     <div className="w-full h-48 bg-gray-200 rounded-lg overflow-hidden mb-4">
                       {selectedDonor.photo ? (
-                        <img src={selectedDonor.photo} alt={selectedDonor.name} className="w-full h-full object-cover" />
+                        <img src={selectedDonor.photo} alt={selectedDonor.fullName} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                           <FaUser size={48} />
@@ -368,7 +281,7 @@ const FindDonors = () => {
                     <div className="bg-red-50 p-4 rounded-lg">
                       <h3 className="font-bold text-red-600 mb-2">যোগাযোগ তথ্য</h3>
                       <p className="text-gray-700 mb-1">
-                        <span className="font-semibold">ফোন:</span> {showPhone === selectedDonor.id ? selectedDonor.phone : '***********'}
+                        <span className="font-semibold">ফোন:</span> {showPhone === selectedDonor.id ? (selectedDonor.phone || "তথ্য নেই") : '***********'}
                       </p>
                       <button
                         onClick={() => setShowPhone(showPhone === selectedDonor.id ? null : selectedDonor.id)}
@@ -383,20 +296,30 @@ const FindDonors = () => {
                     <div className="grid grid-cols-2 gap-4 mb-6">
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <p className="text-gray-500 text-sm">বয়স</p>
-                        <p className="font-semibold text-gray-800">{selectedDonor.age} বছর</p>
+                        <p className="font-semibold text-gray-800">
+                          {selectedDonor.dob ? 
+                            (new Date().getFullYear() - new Date(selectedDonor.dob).getFullYear()) + " বছর" : 
+                            "তথ্য নেই"}
+                        </p>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <p className="text-gray-500 text-sm">লিঙ্গ</p>
-                        <p className="font-semibold text-gray-800">{selectedDonor.gender}</p>
+                        <p className="font-semibold text-gray-800">
+                          {selectedDonor.gender === "male" ? "পুরুষ" : 
+                           selectedDonor.gender === "female" ? "মহিলা" : 
+                           "তথ্য নেই"}
+                        </p>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-lg">
-                        <p className="text-gray-500 text-sm">পেশা</p>
-                        <p className="font-semibold text-gray-800">{selectedDonor.profession}</p>
+                        <p className="text-gray-500 text-sm">ওজন</p>
+                        <p className="font-semibold text-gray-800">
+                          {selectedDonor.weight ? selectedDonor.weight + " কেজি" : "তথ্য নেই"}
+                        </p>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <p className="text-gray-500 text-sm">স্বাস্থ্য অবস্থা</p>
                         <p className="font-semibold text-green-600 flex items-center gap-1">
-                          <FaCheck /> {selectedDonor.healthStatus}
+                          <FaCheck /> {selectedDonor.healthConditions || "সুস্থ"}
                         </p>
                       </div>
                     </div>
@@ -404,7 +327,7 @@ const FindDonors = () => {
                     <div className="mb-6">
                       <h3 className="font-bold text-red-600 mb-2">অবস্থান</h3>
                       <p className="flex items-center gap-2 text-gray-700">
-                        <FaMapMarkerAlt /> {selectedDonor.location}, সিরাজগঞ্জ
+                        <FaMapMarkerAlt /> {selectedDonor.location || "তথ্য নেই"}, সিরাজগঞ্জ
                       </p>
                     </div>
 
@@ -413,36 +336,35 @@ const FindDonors = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <p className="text-gray-500 text-sm">মোট রক্ত দান</p>
-                          <p className="font-semibold text-gray-800">{selectedDonor.totalDonations} বার</p>
+                          <p className="font-semibold text-gray-800">{selectedDonor.donationCount || 0} বার</p>
                         </div>
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <p className="text-gray-500 text-sm">সর্বশেষ দান</p>
-                          <p className="font-semibold text-gray-800">{selectedDonor.lastDonation}</p>
+                          <p className="font-semibold text-gray-800">
+                            {selectedDonor.lastDonation ? 
+                              new Date(selectedDonor.lastDonation).toLocaleDateString() : 
+                              "তথ্য নেই"}
+                          </p>
                         </div>
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <p className="text-gray-500 text-sm">পরবর্তী দানের তারিখ</p>
-                          <p className="font-semibold text-gray-800">{selectedDonor.nextAvailable}</p>
+                          <p className="font-semibold text-gray-800">
+  {selectedDonor.lastDonation ? 
+    new Date(new Date(selectedDonor.lastDonation).setMonth(
+      new Date(selectedDonor.lastDonation).getMonth() + 3
+    )).toLocaleDateString() : 
+    "তথ্য নেই"}
+</p>
+
                         </div>
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <p className="text-gray-500 text-sm">অবস্থা</p>
-                          <p className="font-semibold text-green-600">সক্রিয়</p>
+                          <p className="font-semibold text-green-600">
+                            {selectedDonor.isAvailable ? "সক্রিয়" : "অনুপলব্ধ"}
+                          </p>
                         </div>
                       </div>
                     </div>
-
-                    {selectedDonor.donationHistory && selectedDonor.donationHistory.length > 0 && (
-                      <div>
-                        <h3 className="font-bold text-red-600 mb-2">দানের ইতিহাস</h3>
-                        <div className="space-y-2">
-                          {selectedDonor.donationHistory.map((item, index) => (
-                            <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                              <p className="font-semibold text-gray-800">{item.date}</p>
-                              <p className="text-gray-600">{item.location}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -451,7 +373,7 @@ const FindDonors = () => {
                     onClick={() => setShowPhone(selectedDonor.id)}
                     className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
                   >
-                    <FaPhone /> {showPhone === selectedDonor.id ? selectedDonor.phone : 'যোগাযোগ করুন'}
+                    <FaPhone /> {showPhone === selectedDonor.id ? (selectedDonor.phone || "তথ্য নেই") : 'যোগাযোগ করুন'}
                   </button>
                 </div>
               </div>
