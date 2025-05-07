@@ -74,7 +74,7 @@ const RequestList = () => {
     const matchesSearch = request.patientName?.toLowerCase().includes(searchTerm.toLowerCase()) || 
                      request.hospital?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesBloodGroup = selectedBloodGroup ? request.bloodType === selectedBloodGroup : true;
-    const matchesLocation = selectedLocation ? request.location === selectedLocation : true;
+    const matchesLocation = selectedLocation ? request.hospitalLocation === selectedLocation : true;
     const matchesUrgency = selectedUrgency ? 
                      (selectedUrgency === "emergency" ? request.urgency?.includes('জরুরি') : 
                       !request.urgency?.includes('জরুরি')) : true;
@@ -283,7 +283,7 @@ const RequestList = () => {
                       <FaMapMarkerAlt className="mr-2 text-sm" />
                       <span className="text-xs">অবস্থান</span>
                     </div>
-                    <p className="font-medium">{req.location || 'নির্দিষ্ট করা হয়নি'}</p>
+                    <p className="font-medium">{req.hospitalLocation|| 'নির্দিষ্ট করা হয়নি'}</p>
                   </div>
 
                   <div className="bg-gray-50 p-3 rounded-lg">

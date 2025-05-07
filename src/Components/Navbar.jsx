@@ -8,14 +8,29 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [userType, setUserType] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false); // New state for admin check
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // Check for admin claims
+        const idToken = await currentUser.getIdTokenResult(true);
+        setIsAdmin(!!idToken.claims.admin);
+        
+        // Only set userType from sessionStorage if not admin
+        if (!idToken.claims.admin) {
+          const storedType = sessionStorage.getItem("userType");
+          setUserType(storedType);
+        } else {
+          setUserType("admin");
+        }
+      } else {
+        setIsAdmin(false);
+        setUserType(null);
+      }
       setUser(currentUser);
-      const storedType = sessionStorage.getItem("userType");
-      setUserType(storedType);
       setIsLoading(false);
     });
 
@@ -27,8 +42,37 @@ const Navbar = () => {
     sessionStorage.removeItem("userType");
     setUser(null);
     setUserType(null);
+    setIsAdmin(false);
     setIsMenuOpen(false);
     navigate("/login");
+  };
+
+  const handleProfileClick = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    
+    try {
+      // Force refresh to get latest claims
+      const idToken = await user.getIdTokenResult(true);
+      
+      if (idToken.claims.admin) {
+        // Skip verification for admin users
+        navigate("/admin/dashboard");
+      } else {
+        // For non-admin users, check verification
+        await user.reload();
+        if (!user.emailVerified) {
+          navigate("/verify-email");
+          return;
+        }
+        // Redirect based on user type
+        navigate(userType === "donor" 
+          ? "/donor/dashboard" 
+          : "/patient/dashboard");
+      }
+    } catch (error) {
+      console.error("Profile navigation error:", error);
+    }
   };
 
   if (isLoading) return <div className="h-16 bg-white"></div>;
@@ -40,11 +84,13 @@ const Navbar = () => {
     ...(user
       ? [
           {
-            path:
-              userType === "donor"
-                ? "/donor/dashboard"
+            path: isAdmin 
+              ? "/admin/dashboard" 
+              : userType === "donor" 
+                ? "/donor/dashboard" 
                 : "/patient/dashboard",
             label: "প্রোফাইল",
+            onClick: handleProfileClick // Add click handler for profile
           },
         ]
       : []),
@@ -55,7 +101,9 @@ const Navbar = () => {
         { path: "/login", label: "লগইন" },
         { path: "/register", label: "রেজিস্টার" },
       ]
-    : [];
+    : [
+        
+      ];
 
   return (
     <>

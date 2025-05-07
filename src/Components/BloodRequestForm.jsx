@@ -99,7 +99,7 @@ const PostRequestPage = () => {
       await addDoc(collection(db, "bloodRequests"), newRequest);
       
       alert('আপনার রক্তের অনুরোধ সফলভাবে জমা হয়েছে!');
-      navigate('/requestlist');
+      navigate('/requests');
     } catch (error) {
       console.error("রিকোয়েস্ট জমা দিতে সমস্যা:", error);
       alert('রিকোয়েস্ট জমা দিতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন');

@@ -1,13 +1,30 @@
 import React from 'react';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaHeart } from 'react-icons/fa';
+import { 
+  FaFacebook, 
+  FaTwitter, 
+  FaInstagram, 
+  FaLinkedin, 
+  FaHeart, 
+  FaUserShield,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt
+} from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleAdminClick = () => {
+    navigate("/admin/login");
+  };
+
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-12 font-kalpurush">
       <div className="container mx-auto px-4">
-       
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
 
+          {/* Organization Info Column */}
           <div className="md:col-span-2">
             <div className="flex items-center mb-5">
               <div className="bg-red-600 p-2 rounded-lg mr-3">
@@ -30,6 +47,7 @@ const Footer = () => {
             </div>
           </div>
 
+          {/* Quick Links Column */}
           <div>
             <h3 className="text-xl font-bold mb-6 relative pb-2 after:absolute after:bottom-0 after:left-0 after:w-12 after:h-1 after:bg-gradient-to-r from-red-500 to-red-700">
               প্রয়োজনীয় লিঙ্ক
@@ -56,18 +74,75 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* Contact Info Column */}
           <div>
             <h3 className="text-xl font-bold mb-6 relative pb-2 after:absolute after:bottom-0 after:left-0 after:w-12 after:h-1 after:bg-gradient-to-r from-red-500 to-red-700">
               যোগাযোগ
             </h3>
             <div className="space-y-4">
-              <ContactInfo icon="phone" title="কল করুন" contact="+880 1234 56789" contactType="tel:+" />
-              <ContactInfo icon="email" title="ইমেইল করুন" contact="support@raktobondhon.com" contactType="mailto:" />
-              <ContactInfo icon="location" title="ঠিকানা" contact="খাজা ইউনুস আলী বিশ্ববিদ্যালয়, সিরাজগঞ্জ, বাংলাদেশ" />
+              <div className="flex items-start">
+                <div className="bg-red-600 p-2 rounded-lg mr-3 flex-shrink-0">
+                  <FaPhone className="text-lg" />
+                </div>
+                <div>
+                  <p className="text-gray-400 text-sm">কল করুন</p>
+                  <a href="tel:+880123456789" className="text-gray-300 hover:text-red-400 transition-colors font-medium">
+                    +880 1234 56789
+                  </a>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-red-600 p-2 rounded-lg mr-3 flex-shrink-0">
+                  <FaEnvelope className="text-lg" />
+                </div>
+                <div>
+                  <p className="text-gray-400 text-sm">ইমেইল করুন</p>
+                  <a href="mailto:support@raktobondhon.com" className="text-gray-300 hover:text-red-400 transition-colors font-medium">
+                    support@raktobondhon.com
+                  </a>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-red-600 p-2 rounded-lg mr-3 flex-shrink-0">
+                  <FaMapMarkerAlt className="text-lg" />
+                </div>
+                <div>
+                  <p className="text-gray-400 text-sm">ঠিকানা</p>
+                  <p className="text-gray-300 font-medium">
+                    খাজা ইউনুস আলী বিশ্ববিদ্যালয়, সিরাজগঞ্জ, বাংলাদেশ
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Admin Access Column */}
+          <div>
+            <h3 className="text-xl font-bold mb-6 relative pb-2 after:absolute after:bottom-0 after:left-0 after:w-12 after:h-1 after:bg-gradient-to-r from-blue-500 to-blue-700">
+              প্রশাসন
+            </h3>
+            <div className="space-y-4">
+              <button 
+                onClick={handleAdminClick}
+                className="flex items-center px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-all w-full group"
+              >
+                <div className="bg-blue-600 p-2 rounded-lg mr-3">
+                  <FaUserShield className="text-lg" />
+                </div>
+                <div>
+                  <p className="text-gray-300 text-sm">সিস্টেম ম্যানেজমেন্ট</p>
+                  <p className="text-white font-medium group-hover:text-blue-400 transition-colors">
+                    অ্যাডমিন লগইন
+                  </p>
+                </div>
+              </button>
             </div>
           </div>
         </div>
 
+        {/* Footer Bottom Section */}
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex space-x-6 mb-4 md:mb-0">
@@ -101,46 +176,6 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  );
-};
-
-// Helper component for contact information
-const ContactInfo = ({ icon, title, contact, contactType }) => {
-  const icons = {
-    phone: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-      </svg>
-    ),
-    email: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-      </svg>
-    ),
-    location: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-      </svg>
-    ),
-  };
-
-  return (
-    <div className="flex items-start">
-      <div className="bg-red-600 p-2 rounded-lg mr-3 flex-shrink-0">
-        {icons[icon]}
-      </div>
-      <div>
-        <p className="text-gray-400 text-sm">{title}</p>
-        {contactType ? (
-          <a href={`${contactType}${contact}`} className="text-gray-300 hover:text-red-400 transition-colors font-medium">
-            {contact}
-          </a>
-        ) : (
-          <p className="text-gray-300 font-medium">{contact}</p>
-        )}
-      </div>
-    </div>
   );
 };
 

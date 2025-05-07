@@ -21,6 +21,7 @@ import DonorLogin from "./components/donor/DonorLogin";
 import PatientLogin from "./components/patient/PatientLogin";
 import DonorRegister from "./components/donor/DonorRegister";
 import PatientRegister from "./components/patient/PatientRegister";
+import TopDoner from "./Pages/topdonor";
 
 
 // import PatientRegister from "./Components/patient/PatientRegister";
@@ -48,6 +49,7 @@ function App() {
             <Route path ="/patient/login" element={<PatientLogin/>}/>
             <Route path ="/patient/register" element = {<PatientRegister/>}/>
             <Route path ="/donor/register" element = {<DonorRegister/>}/>
+            <Route path ="/top/donor" element={<TopDoner/>}/>
 
 
 
@@ -55,7 +57,7 @@ function App() {
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/patient/dashboard" element={<PrivateRoute><PatientDashboard /></PrivateRoute>} />
             <Route path="/donor/dashboard" element={<PrivateRoute><DonorDashboard /></PrivateRoute>} />
-            <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard/></PrivateRoute>} />
+            <Route path="/admin/dashboard" element={<AdminDashboard/>} />
 
             {/* 404 Not Found */}
             <Route path="*" element={<NotFound />} />
